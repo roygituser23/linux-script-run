@@ -18,7 +18,7 @@ on:
 
 jobs:
   run_script:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-20.04
 
     steps: 
       - name: Checkout Repository
