@@ -1,0 +1,41 @@
+name: Run bash script on Linux VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      vm-host:
+        description: 'VM hostname or IP address'
+        required: true
+      username:
+        description: 'Ssh username'
+        required: true
+      password:
+        description: 'Ssh Password'
+        required: true
+      script-args: 
+        description: 'ARG1 ARG2 ARG3 in space separated way'
+        required: true
+
+jobs:
+  run_script:
+    runs-on: ubuntu_latest
+
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install sshpass
+        run: sudo apt-get -y install sshpass
+
+      - name: Setup SSH
+        run: |
+         mkdir -p ~/.ssh/
+         echo "${{ inputs.password }}" > ~./.ssh/password
+         chmod 600 ~/.ssh/password
+         ssh-keyscan -t rsa,dsa -H ${{ inputs.vm-host}} > ~/.ssh/known_hosts
+
+      - name: Run the bash script on VM
+        run: |
+          sshpass -p "${{ inputs.password }}" ssh "${{ inputs.username }}"@"${{ inputs.vm-host }}" "bash -s" < script.sh "${{ inputs.script-args }}"  
+         
+            
