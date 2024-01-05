@@ -35,7 +35,7 @@ jobs:
        
       - name: Mask Password
         run: |
-          echo "::add-mask::${{ inputs.password }}" 
+          #echo "::add-mask::${{ inputs.password }}" 
           #USER_PASSWORD=$(jq -r '.inputs.password' $GITHUB_EVENT_PATH)
           #echo ::add-mask::$USER_PASSWORD
           #echo USER_PASSWORD=$USER_PASSWORD >> $GITHUB_ENV
@@ -47,6 +47,6 @@ jobs:
 
       - name: Run the bash script on VM
         run: |
-          sshpass -p "${{ inputs.password }}" ssh "${{ inputs.username }}"@"${{ inputs.vm-host }}" "bash -s" < .github/workflows/script.sh "${{ inputs.sid }}" "${{ inputs.serial }}" "${{ inputs.db-name }}" 
+          sshpass -p "::add-mask::${{ inputs.password }}" ssh "${{ inputs.username }}"@"${{ inputs.vm-host }}" "bash -s" < .github/workflows/script.sh "${{ inputs.sid }}" "${{ inputs.serial }}" "${{ inputs.db-name }}" 
          
             
