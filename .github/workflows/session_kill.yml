@@ -1,4 +1,4 @@
-name: Run bash script on Linux VM
+name: Run bash script For Session Kill
 
 on:
   workflow_dispatch:
