@@ -1,0 +1,47 @@
+name: Run bash script on Linux VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      vm-host:
+        description: 'VM hostname or IP address'
+        required: true
+      username:
+        description: 'Ssh username'
+        required: true
+      password:
+        description: 'Ssh Password'
+        required: true
+      sid: 
+        description: 'SID of the session'
+        required: true
+      serial: 
+        description: 'SERIAL of the session'
+        required: true  
+      db-name: 
+        description: 'Database Name for which session will be killed'
+        required: true  
+
+jobs:
+  run_script:
+    runs-on: ubuntu-20.04
+
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install sshpass
+        run: sudo apt-get -y install sshpass
+
+      - name: Setup SSH
+        run: |
+         mkdir -p ~/.ssh/
+         #echo "${{ inputs.password }}" > ~./.ssh/password
+         #chmod 600 ~/.ssh/password
+         ssh-keyscan -t rsa,dsa -H ${{ inputs.vm-host}} > ~/.ssh/known_hosts
+
+      - name: Run the bash script on VM
+        run: |
+          sshpass -p "${{ inputs.password }}" ssh "${{ inputs.username }}"@"${{ inputs.vm-host }}" "bash -s" < .github/workflows/script.sh "${{ inputs.sid }}" "${{ inputs.serial }}" "${{ inputs.db-name }}" 
+         
+            
